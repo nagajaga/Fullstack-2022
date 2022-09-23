@@ -1,26 +1,23 @@
-const Header = (props) => <h1>{props.course.name}</h1>
-const Part = (props) => <p> {props.name} {props.exercises}</p>
-const Content = (props) => {
+const Header = ({name}) => <h1>{name}</h1>
+const Part = ({part}) => <p> {part.name} {part.exercises}</p>
+const Total = ({parts}) => <p><b>Total of {parts.map(part => part.exercises).reduce((prev,cur) => prev + cur,0)} exercises</b></p>
+const Content = ({parts}) => {
   return (
     <div>
-        {props.parts.map(part => <Part name={part.name} exercises={part.exercises} key = {part.id}/>)}
+        {parts.map(part => <Part part = {part} key = {part.id}/>)}
     </div>
   )
 }
 const Course = ({course}) => {
-  let sum = 0
-  for (let part of course.parts) {
-      sum += part.exercises
-  }
+
   return(
     <div>
-      <Header course={course} />
-      <Content parts= {course.parts} />
-      <Total sum = {sum}/>    
+      <Header name = {course.name} />
+      <Content parts = {course.parts} />
+      <Total parts = {course.parts}/>    
     </div>
   )
 }
-const Total = (props) => <p><b>Total of {props.sum} exercises</b></p>
 const App = () => {
   const course = {
     name: 'Half Stack application development',
