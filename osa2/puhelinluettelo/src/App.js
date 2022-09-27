@@ -19,6 +19,8 @@ const App = () => {
       return;
     }
     setPersons(persons.concat(person));
+    setNewName('')
+    setNewNumber('')
   };
 
   const filterPersons = (person) =>
@@ -30,6 +32,8 @@ const App = () => {
       <Filter handleFilter={(event) => setFilter(event.target.value)} />
       <h2>add a new</h2>
       <PersonForm
+        nameValue={newName}
+        numberValue={newNumber}
         handleNameChange={(event) => setNewName(event.target.value)}
         handleNumberChange={(event) => setNewNumber(event.target.value)}
         handleSubmit={addPerson}
