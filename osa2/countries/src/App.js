@@ -21,7 +21,11 @@ const App = () => {
   return (
     <div>
       <Filter handleFilter={(event) => setFilter(event.target.value)} />
-      <Countries countries={countries} filterC={filterCountries} />
+      <Countries
+        countries={countries}
+        filterC={filterCountries}
+        setCountriesToShow={setFilter}
+      />
     </div>
   );
 };
