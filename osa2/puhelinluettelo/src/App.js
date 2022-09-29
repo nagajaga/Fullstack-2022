@@ -3,6 +3,7 @@ import axios from "axios";
 import PersonForm from "./components/PersonForm";
 import Filter from "./components/Filter";
 import Persons from "./components/Persons";
+import personService from "./services/persons";
 
 const App = () => {
   const [persons, setPersons] = useState([]);
@@ -11,10 +12,8 @@ const App = () => {
   const [filter, setFilter] = useState("");
 
   useEffect(() => {
-    console.log("effect");
-    axios.get("http://localhost:3001/persons").then((response) => {
-      console.log("promise fulfilled");
-      setPersons(response.data);
+    personService.getAll().then((initialPersons) => {
+      setPersons(initialPersons);
     });
   }, []);
 
@@ -22,18 +21,33 @@ const App = () => {
     const person = { name: newName, number: newNumber };
     event.preventDefault();
     if (persons.some((p) => p.name === newName)) {
-      alert(newName + " is already added to phonebook");
+
+      if (
+        window.confirm(
+          `${person.name} is already added to phonebook, replace the old number with a new one?`
+        )
+      ) {
+        const duplicate = persons.find(p => p.name === newName)
+        personService.update(duplicate.id, person)
+        setPersons(persons.map(p => p.name === duplicate.name ? person : p))
+      }
+
       return;
     }
-    
-    axios.post("http://localhost:3001/persons", person).then((response) => {
-      console.log(response);
-      setPersons(persons.concat(response.data));
+
+    personService.create(person).then((returnedPerson) => {
+      setPersons(persons.concat(returnedPerson));
       setNewName("");
       setNewNumber("");
     });
   };
 
+  const deletePerson = (person) => {
+    if (window.confirm(`Delete ${person.name}`)) {
+      personService.yeet(person.id);
+      setPersons(persons.filter((p) => p.name !== person.name));
+    }
+  };
   const filterPersons = (person) =>
     person.name.toUpperCase().indexOf(filter.toUpperCase()) > -1;
 
@@ -50,7 +64,11 @@ const App = () => {
         handleSubmit={addPerson}
       />
       <h2>Numbers</h2>
-      <Persons persons={persons} filterP={filterPersons} />
+      <Persons
+        persons={persons}
+        filterP={filterPersons}
+        handleDelete={deletePerson}
+      />
     </div>
   );
 };
