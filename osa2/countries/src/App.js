@@ -6,6 +6,7 @@ import Countries from "./components/Countries";
 const App = () => {
   const [countries, setCountries] = useState([]);
   const [filter, setFilter] = useState("");
+  const [override, setOverride] = useState(null)
 
   useEffect(() => {
     console.log("effect");
@@ -20,11 +21,12 @@ const App = () => {
 
   return (
     <div>
-      <Filter handleFilter={(event) => setFilter(event.target.value)} />
+      <Filter handleFilter={(event) => {setFilter(event.target.value); setOverride(null)}} value = {filter} />
       <Countries
         countries={countries}
         filterC={filterCountries}
-        setCountriesToShow={setFilter}
+        setCountriesToShow={setOverride}
+        override={override}
       />
     </div>
   );
