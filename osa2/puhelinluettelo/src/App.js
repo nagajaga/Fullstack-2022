@@ -30,15 +30,23 @@ const App = () => {
       ) {
         const duplicate = persons.find((p) => p.name === newName);
         console.log(duplicate);
-        personService.update(duplicate.id, person).then(() => {
-          setSuccess(`Updated ${person.name}`);
-          setTimeout(() => {
-            setSuccess(null);
-          }, 5000);
-        });
-        setPersons(
-          persons.map((p) => (p.name === duplicate.name ? person : p))
-        );
+        personService
+          .update(duplicate.id, person)
+          .then(() => {
+            setSuccess(`Updated ${person.name}`);
+            setTimeout(() => {
+              setSuccess(null);
+            }, 5000);
+            setPersons(
+              persons.map((p) => (p.name === duplicate.name ? person : p))
+            );
+          })
+          .catch((error) => {
+            setError(error.response.data.error);
+            setTimeout(() => {
+              setError(null);
+            }, 5000);
+          });
       }
 
       return;
