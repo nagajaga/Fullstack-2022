@@ -27,9 +27,26 @@ const mostBlogs = (blogs) => {
 
   return { author: mostblogged[0], blogs: mostblogged[1] };
 };
+
+const mostLikes = (blogs) => {
+  const authors = new Map();
+  for (const blog of blogs) {
+    if (authors.has(blog.author)) {
+      authors.set(blog.author, authors.get(blog.author) + blog.likes);
+    } else {
+      authors.set(blog.author, blog.likes);
+    }
+  }
+  const mostblogged = Array.from(authors.entries()).reduce((prev, current) =>
+    prev[1] > current[1] ? prev : current
+  );
+
+  return { author: mostblogged[0], likes: mostblogged[1] };
+};
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
   mostBlogs,
+  mostLikes
 };
