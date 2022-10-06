@@ -52,15 +52,23 @@ const App = () => {
       return;
     }
 
-    personService.create(person).then((returnedPerson) => {
-      setPersons(persons.concat(returnedPerson));
-      setNewName("");
-      setNewNumber("");
-      setSuccess(`Added ${person.name}`);
-      setTimeout(() => {
-        setSuccess(null);
-      }, 5000);
-    });
+    personService
+      .create(person)
+      .then((returnedPerson) => {
+        setPersons(persons.concat(returnedPerson));
+        setNewName("");
+        setNewNumber("");
+        setSuccess(`Added ${person.name}`);
+        setTimeout(() => {
+          setSuccess(null);
+        }, 5000);
+      })
+      .catch((error) => {
+        setError(error.response.data.error);
+        setTimeout(() => {
+          setError(null);
+        }, 5000);
+      });
   };
 
   const deletePerson = (person) => {
