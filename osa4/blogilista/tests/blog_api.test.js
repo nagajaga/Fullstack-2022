@@ -1,7 +1,6 @@
-const mongoose = require("mongoose");
 const supertest = require("supertest");
+const mongoose = require("mongoose");
 const app = require("../app");
-
 const api = supertest(app);
 const Blog = require("../models/blog");
 
@@ -98,6 +97,31 @@ test("blog without likes has 0 likes", async () => {
   }
 });
 
+test("blog without title", async () => {
+  const newBlog = {
+    author: "joel",
+    url: "nolikes.com",
+    likes: 5,
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const response = await api.get("/api/blogs");
+  expect(response.body).toHaveLength(initialBlogs.length);
+});
+
+test("blog without url", async () => {
+  const newBlog = {
+    title: "testinggg",
+    author: "joel",
+    likes: 5,
+  };
+
+  await api.post("/api/blogs").send(newBlog).expect(400);
+
+  const response = await api.get("/api/blogs");
+  expect(response.body).toHaveLength(initialBlogs.length);
+});
 afterAll(() => {
   mongoose.connection.close();
 });
