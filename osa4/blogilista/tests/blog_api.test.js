@@ -80,16 +80,22 @@ test("a valid blog can be added ", async () => {
   expect(contents).toContain("new blog");
 });
 
-test("blog without title is not added", async () => {
+test("blog without likes has 0 likes", async () => {
   const newBlog = {
+    title: "nolikes",
     author: "joel",
+    url: "nolikes.com",
   };
 
-  await api.post("/api/blogs").send(newBlog).expect(400);
+  await api.post("/api/blogs").send(newBlog).expect(201);
 
   const response = await api.get("/api/blogs");
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+  for (const blog of response.body) {
+    if (blog.title === "nolikes") {
+      expect(blog.likes).toBe(0);
+    }
+  }
 });
 
 afterAll(() => {
