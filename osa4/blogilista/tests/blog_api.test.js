@@ -35,6 +35,16 @@ test("blogs are returned as json", async () => {
     .expect("Content-Type", /application\/json/);
 });
 
+test("blogs have id", async () => {
+  const response = await api
+    .get("/api/blogs")
+    .expect(200)
+    .expect("Content-Type", /application\/json/);
+
+  for (const blog of response.body) {
+    expect(blog.id).toBeDefined();
+  }
+});
 test("there are two blogs", async () => {
   const response = await api.get("/api/blogs");
 
