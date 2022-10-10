@@ -122,6 +122,13 @@ test("blog without url", async () => {
   const response = await api.get("/api/blogs");
   expect(response.body).toHaveLength(initialBlogs.length);
 });
+
+test("removing a single blog works", async () => {
+  const response = await api.get("/api/blogs");
+  await api.delete(`/api/blogs/${response.body[0].id}`).expect(204);
+  const after = await api.get("/api/blogs");
+  expect(after.body).toHaveLength(response.body.length -1);
+});
 afterAll(() => {
   mongoose.connection.close();
 });
