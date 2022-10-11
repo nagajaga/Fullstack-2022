@@ -127,7 +127,21 @@ test("removing a single blog works", async () => {
   const response = await api.get("/api/blogs");
   await api.delete(`/api/blogs/${response.body[0].id}`).expect(204);
   const after = await api.get("/api/blogs");
-  expect(after.body).toHaveLength(response.body.length -1);
+  expect(after.body).toHaveLength(response.body.length - 1);
+});
+
+test("updating a blog works", async () => {
+  const response = await api.get("/api/blogs");
+  const updatedBlog = {
+    title: "updatedTitle",
+    author: "updatedAuthor",
+    url: "www.updates.com",
+    likes: 5,
+    id: response.body[0].id
+  };
+  await api.put(`/api/blogs/${response.body[0].id}`).send(updatedBlog).expect(200);
+  const after = await api.get("/api/blogs");
+  expect(after.body).toContainEqual(updatedBlog);
 });
 afterAll(() => {
   mongoose.connection.close();
