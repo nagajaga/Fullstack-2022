@@ -3,27 +3,13 @@ const mongoose = require("mongoose");
 const app = require("../app");
 const api = supertest(app);
 const Blog = require("../models/blog");
-
-const initialBlogs = [
-  {
-    title: "testitle",
-    author: "joel",
-    url: "google.com",
-    likes: 3,
-  },
-  {
-    title: "testing",
-    author: "person",
-    url: "youtube.com",
-    likes: 2,
-  },
-];
+const helper = require("./test_helper");
 
 beforeEach(async () => {
   await Blog.deleteMany({});
-  let blogObject = new Blog(initialBlogs[0]);
+  let blogObject = new Blog(helper.initialBlogs[0]);
   await blogObject.save();
-  blogObject = new Blog(initialBlogs[1]);
+  blogObject = new Blog(helper.initialBlogs[1]);
   await blogObject.save();
 });
 
@@ -47,7 +33,7 @@ test("blogs have id", async () => {
 test("there are two blogs", async () => {
   const response = await api.get("/api/blogs");
 
-  expect(response.body).toHaveLength(initialBlogs.length);
+  expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
 test("a specific blog is within the returned blogs", async () => {
@@ -75,7 +61,7 @@ test("a valid blog can be added ", async () => {
 
   const contents = response.body.map((r) => r.title);
 
-  expect(response.body).toHaveLength(initialBlogs.length + 1);
+  expect(response.body).toHaveLength(helper.initialBlogs.length + 1);
   expect(contents).toContain("new blog");
 });
 
@@ -107,7 +93,7 @@ test("blog without title", async () => {
   await api.post("/api/blogs").send(newBlog).expect(400);
 
   const response = await api.get("/api/blogs");
-  expect(response.body).toHaveLength(initialBlogs.length);
+  expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
 test("blog without url", async () => {
@@ -120,7 +106,7 @@ test("blog without url", async () => {
   await api.post("/api/blogs").send(newBlog).expect(400);
 
   const response = await api.get("/api/blogs");
-  expect(response.body).toHaveLength(initialBlogs.length);
+  expect(response.body).toHaveLength(helper.initialBlogs.length);
 });
 
 test("removing a single blog works", async () => {
@@ -137,9 +123,12 @@ test("updating a blog works", async () => {
     author: "updatedAuthor",
     url: "www.updates.com",
     likes: 5,
-    id: response.body[0].id
+    id: response.body[0].id,
   };
-  await api.put(`/api/blogs/${response.body[0].id}`).send(updatedBlog).expect(200);
+  await api
+    .put(`/api/blogs/${response.body[0].id}`)
+    .send(updatedBlog)
+    .expect(200);
   const after = await api.get("/api/blogs");
   expect(after.body).toContainEqual(updatedBlog);
 });
