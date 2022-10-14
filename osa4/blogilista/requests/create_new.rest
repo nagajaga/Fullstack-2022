@@ -2,8 +2,9 @@ POST http://localhost:3001/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "testitle",
+    "title": "testitlea",
     "author": "joel",
     "url": "google.com",
-    "likes": 3
+    "likes": 3,
+    "userId": "6346ed562f8e080f1b5d0a02"
 }

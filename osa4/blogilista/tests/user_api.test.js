@@ -80,7 +80,7 @@ describe("when there is initially one user at db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
-  test("creation fails no username", async () => {
+  test("creation fails with no username", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
@@ -99,7 +99,7 @@ describe("when there is initially one user at db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
-  test("creation fails no password", async () => {
+  test("creation fails with no password", async () => {
     const usersAtStart = await helper.usersInDb();
 
     const newUser = {
@@ -118,7 +118,28 @@ describe("when there is initially one user at db", () => {
     const usersAtEnd = await helper.usersInDb();
     expect(usersAtEnd).toHaveLength(usersAtStart.length);
   });
+  test("creation fails with short password", async () => {
+    const usersAtStart = await helper.usersInDb();
+
+    const newUser = {
+      username: "rooter",
+      name: "Superuser",
+      password: "pw"
+    };
+
+    const result = await api
+      .post("/api/users")
+      .send(newUser)
+      .expect(400)
+      .expect("Content-Type", /application\/json/);
+
+    expect(result.body.error).toContain("password must be at least 3 characters long");
+
+    const usersAtEnd = await helper.usersInDb();
+    expect(usersAtEnd).toHaveLength(usersAtStart.length);
+  });
 });
+
 afterAll(() => {
   mongoose.connection.close();
 });
