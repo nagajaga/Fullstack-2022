@@ -2,9 +2,9 @@ POST http://localhost:3001/api/blogs/
 Content-Type: application/json
 
 {
-    "title": "testitlea",
+    "url": "https://fullstackopen.com/osa4/token_perustainen_kirjautuminen",
+    "title": "Full stack part 4",
     "author": "joel",
-    "url": "google.com",
     "likes": 3,
-    "userId": "6346ed562f8e080f1b5d0a02"
+    "userId": "6349616d53739e374c31b6e0"
 }

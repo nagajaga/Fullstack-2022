@@ -13,11 +13,11 @@ blogsRouter.post("/", async (request, response) => {
   const user = await User.findById(body.userId);
 
   const blog = new Blog({
+    url: body.url,
     title: body.title,
     author: body.author,
-    url: body.url,
     likes: body.likes || 0,
-    user: user._id
+    user: user._id,
   });
 
   const savedBlog = await blog.save();
