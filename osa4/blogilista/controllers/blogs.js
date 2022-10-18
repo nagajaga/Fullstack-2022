@@ -27,10 +27,12 @@ blogsRouter.post("/", async (request, response) => {
 blogsRouter.delete("/:id", async (request, response) => {
   const user = request.user;
   const blog = await Blog.findById(request.params.id);
-  if (blog.user.toString() === user._id.toString()) {
+  if (blog) {
+    if (blog.user && blog.user.toString() !== user._id.toString()) {
+      return response.status(401).json({ error: "no token authorization" });
+    }
     await blog.remove();
   }
-
   response.status(204).end();
 });
 
