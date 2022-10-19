@@ -1,8 +1,38 @@
-import { useState, useEffect } from "react";
+import {
+  useState,
+  useEffect,
+  useRef,
+  useImperativeHandle,
+  forwardRef,
+} from "react";
 import Blog from "./components/Blog";
 import blogService from "./services/blogs";
 import loginService from "./services/login";
 import Notification from "./components/Notification";
+import BlogForm from "./components/BlogForm";
+
+const Togglable = forwardRef((props, ref) => {  const [visible, setVisible] = useState(false)
+
+  const hideWhenVisible = { display: visible ? 'none' : '' }
+  const showWhenVisible = { display: visible ? '' : 'none' }
+
+  const toggleVisibility = () => {
+    setVisible(!visible)
+  }
+
+  useImperativeHandle(ref, () => {    return {      toggleVisibility    }  })
+  return (
+    <div>
+      <div style={hideWhenVisible}>
+        <button onClick={toggleVisibility}>{props.buttonLabel}</button>
+      </div>
+      <div style={showWhenVisible}>
+        {props.children}
+        <button onClick={toggleVisibility}>cancel</button>
+      </div>
+    </div>
+  )
+})
 
 const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState("");
@@ -23,14 +53,18 @@ const LoginForm = ({ setUser }) => {
       setUsername("");
       setPassword("");
     } catch (exception) {
-      setErrorMessage("wrong username or password")
+      setErrorMessage("wrong username or password");
     }
   };
 
   return (
     <div>
       <h2>Login</h2>
-      <Notification message={errorMessage} setMessage= {setErrorMessage} error = {true}/>
+      <Notification
+        message={errorMessage}
+        setMessage={setErrorMessage}
+        error={true}
+      />
       <form onSubmit={handleLogin}>
         <div>
           username
@@ -58,9 +92,6 @@ const LoginForm = ({ setUser }) => {
 
 const Blogs = ({ user, setUser }) => {
   const [blogs, setBlogs] = useState([]);
-  const [title, setTitle] = useState("");
-  const [url, setUrl] = useState("");
-  const [author, setAuthor] = useState("");
   const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
@@ -72,59 +103,28 @@ const Blogs = ({ user, setUser }) => {
     setUser(null);
   };
 
-  const addBlog = async (event) => {
-    event.preventDefault()
-    const blog = {
-      title,
-      author,
-      url,
-    };
-    const createdBlog = await blogService.create(blog);
-    setSuccessMessage(`a new blog ${blog.title} added`)
-    setTitle("")
-    setAuthor("")
-    setUrl("")
-    setBlogs(blogs.concat(createdBlog))
-    
-  };
+  const blogFormRef = useRef();
+
   return (
     <div>
       <h2>blogs</h2>
-      <Notification message={successMessage} setMessage= {setSuccessMessage} error = {false}/>
+      <Notification
+        message={successMessage}
+        setMessage={setSuccessMessage}
+        error={false}
+      />
       <p>
         {user.name} has logged in<button onClick={logout}>logout</button>{" "}
       </p>
       <h2>create new</h2>
-      <form onSubmit={addBlog}>
-        <div>
-          title
-          <input
-            type="text"
-            value={title}
-            name="Title"
-            onChange={({ target }) => setTitle(target.value)}
-          />
-        </div>
-        <div>
-          author
-          <input
-            type="text"
-            value={author}
-            name="Author"
-            onChange={({ target }) => setAuthor(target.value)}
-          />
-        </div>
-        <div>
-          url
-          <input
-            type="text"
-            value={url}
-            name="Url"
-            onChange={({ target }) => setUrl(target.value)}
-          />
-        </div>
-        <button type="submit">create</button>
-      </form>
+      <Togglable buttonLabel="new blog" ref={blogFormRef}>
+        <BlogForm
+          setSuccessMessage={setSuccessMessage}
+          setBlogs={setBlogs}
+          blogs={blogs}
+          ref={blogFormRef}
+        ></BlogForm>
+      </Togglable>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
