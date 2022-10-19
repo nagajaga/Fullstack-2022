@@ -15,6 +15,7 @@ const LoginForm = ({ setUser }) => {
         username,
         password,
       });
+      window.localStorage.setItem("loggedBlogappUser", JSON.stringify(user));
       blogService.setToken(user.token);
       setUser(user);
       setUsername("");
@@ -52,16 +53,21 @@ const LoginForm = ({ setUser }) => {
   );
 };
 
-const Blogs = () => {
+const Blogs = ({user, setUser}) => {
   const [blogs, setBlogs] = useState([]);
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
+  const logout = () => {
+    window.localStorage.removeItem('loggedBlogappUser')
+    setUser(null)
+  }
   return (
     <div>
       <h2>blogs</h2>
+      <p>{user.name} has logged in<button onClick={logout}>logout</button> </p>
       {blogs.map((blog) => (
         <Blog key={blog.id} blog={blog} />
       ))}
@@ -71,8 +77,17 @@ const Blogs = () => {
 
 const App = () => {
   const [user, setUser] = useState(null);
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem("loggedBlogappUser");
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      blogService.setToken(user.token);
+    }
+  }, []);
   return (
-    <div>{user === null ? <LoginForm setUser={setUser} /> : <Blogs />}</div>
+    <div>{user === null ? <LoginForm setUser={setUser} /> : <Blogs user = {user} setUser = {setUser} />}</div>
+    
   );
 };
 
