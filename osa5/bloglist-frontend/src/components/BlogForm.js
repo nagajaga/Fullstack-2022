@@ -1,33 +1,30 @@
-import { useState, forwardRef } from "react";
-import blogService from "../services/blogs";
+import { useState } from "react";
 
-const BlogForm = forwardRef(({ setSuccessMessage, setBlogs, blogs }, ref) => {
+const BlogForm = ({ addBlog }) => {
   const [title, setTitle] = useState("");
   const [url, setUrl] = useState("");
   const [author, setAuthor] = useState("");
 
-  const addBlog = async (event) => {
+  const handleSubmit = (event) => {
     event.preventDefault();
     const blog = {
       title,
       author,
       url,
     };
-    const createdBlog = await blogService.create(blog);
-    ref.current.toggleVisibility();
-
-    setSuccessMessage(`a new blog ${blog.title} added`);
     setTitle("");
     setAuthor("");
     setUrl("");
-    setBlogs(blogs.concat(createdBlog));
+
+    addBlog(blog);
   };
 
   return (
-    <form onSubmit={addBlog}>
+    <form onSubmit={handleSubmit}>
       <div>
         title
         <input
+          id= "title"
           type="text"
           value={title}
           name="Title"
@@ -37,6 +34,7 @@ const BlogForm = forwardRef(({ setSuccessMessage, setBlogs, blogs }, ref) => {
       <div>
         author
         <input
+          id= "author"
           type="text"
           value={author}
           name="Author"
@@ -46,6 +44,7 @@ const BlogForm = forwardRef(({ setSuccessMessage, setBlogs, blogs }, ref) => {
       <div>
         url
         <input
+          id = "url"
           type="text"
           value={url}
           name="Url"
@@ -55,7 +54,7 @@ const BlogForm = forwardRef(({ setSuccessMessage, setBlogs, blogs }, ref) => {
       <button type="submit">create</button>
     </form>
   );
-});
+};
 
 BlogForm.displayName = "BlogForm";
 export default BlogForm;

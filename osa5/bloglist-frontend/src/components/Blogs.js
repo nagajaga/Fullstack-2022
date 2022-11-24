@@ -8,6 +8,7 @@ import BlogForm from "./BlogForm";
 const Blogs = ({ user, setUser }) => {
   const [blogs, setBlogs] = useState([]);
   const [successMessage, setSuccessMessage] = useState(null);
+  const blogFormRef = useRef();
 
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
@@ -35,12 +36,18 @@ const Blogs = ({ user, setUser }) => {
       removeBlog(blog.id);
     }
   };
+
+  const addBlog = async (blog) => {
+    const createdBlog = await blogService.create(blog);
+    blogFormRef.current.toggleVisibility();
+    setSuccessMessage(`a new blog ${blog.title} added`);
+    setBlogs(blogs.concat(createdBlog));
+  };
+
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
   };
-
-  const blogFormRef = useRef();
 
   return (
     <div>
@@ -55,22 +62,12 @@ const Blogs = ({ user, setUser }) => {
       </p>
       <h2>create new</h2>
       <Togglable buttonLabel="new blog" ref={blogFormRef}>
-        <BlogForm
-          setSuccessMessage={setSuccessMessage}
-          setBlogs={setBlogs}
-          blogs={blogs}
-          ref={blogFormRef}
-        ></BlogForm>
+        <BlogForm addBlog={addBlog}></BlogForm>
       </Togglable>
       {[...blogs]
         .sort((a, b) => a.likes < b.likes)
         .map((blog) => (
-          <Blog
-            key={blog.id}
-            blog={blog}
-            like={like}
-            remove={remove}
-          />
+          <Blog key={blog.id} blog={blog} like={like} remove={remove} />
         ))}
     </div>
   );
