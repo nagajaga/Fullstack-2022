@@ -1,6 +1,6 @@
 import { useState } from "react";
 import blogService from "../services/blogs";
-const Blog = ({ blog,updateBlogs }) => {
+const Blog = ({ blog,updateBlogs, removeBlog }) => {
   const blogStyle = {
     paddingTop: 10,
     paddingLeft: 2,
@@ -24,6 +24,10 @@ const Blog = ({ blog,updateBlogs }) => {
     updateBlogs(updatedBlog);
   };
 
+  const remove = async () => {
+    await blogService.remove(blog.id);
+    removeBlog(blog.id)
+  }
   return (
     <div style={blogStyle}>
       <div>
@@ -39,6 +43,7 @@ const Blog = ({ blog,updateBlogs }) => {
           <button onClick={like}>like</button>
         </p>
         <p style={detailStyle}>{blog.user.name}</p>
+        <button onClick={remove}>remove</button>
       </div>
     </div>
   );

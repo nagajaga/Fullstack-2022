@@ -105,6 +105,10 @@ const Blogs = ({ user, setUser }) => {
   const updateBlogs = (updatedBlog) => {
     setBlogs(blogs.map((b)=> b.id === updatedBlog.id ? updatedBlog : b))
   }
+
+  const removeBlog = (removedId) => {
+    setBlogs(blogs.filter((b)=> b.id !== removedId))
+  }
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
@@ -133,7 +137,7 @@ const Blogs = ({ user, setUser }) => {
         ></BlogForm>
       </Togglable>
       {[...blogs].sort((a,b) => a.likes < b.likes).map((blog) => (
-        <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
+        <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} removeBlog={removeBlog}/>
       ))}
     </div>
   );
