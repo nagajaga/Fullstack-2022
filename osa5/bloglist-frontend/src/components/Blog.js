@@ -33,7 +33,7 @@ const Blog = ({ blog, updateBlogs, removeBlog }) => {
   return (
     <div style={blogStyle}>
       <div>
-        {blog.title} {blog.author}
+        <b>{blog.title}</b> {blog.author}
         <button onClick={() => setDetails(!details)}>
           {details ? "hide" : "view"}
         </button>
