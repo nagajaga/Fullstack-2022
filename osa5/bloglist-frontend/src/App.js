@@ -11,16 +11,19 @@ import loginService from "./services/login";
 import Notification from "./components/Notification";
 import BlogForm from "./components/BlogForm";
 
-const Togglable = forwardRef((props, ref) => {  const [visible, setVisible] = useState(false)
+const Togglable = forwardRef((props, ref) => {
+  const [visible, setVisible] = useState(false);
 
-  const hideWhenVisible = { display: visible ? 'none' : '' }
-  const showWhenVisible = { display: visible ? '' : 'none' }
+  const hideWhenVisible = { display: visible ? "none" : "" };
+  const showWhenVisible = { display: visible ? "" : "none" };
 
   const toggleVisibility = () => {
-    setVisible(!visible)
-  }
+    setVisible(!visible);
+  };
 
-  useImperativeHandle(ref, () => {    return {      toggleVisibility    }  })
+  useImperativeHandle(ref, () => {
+    return { toggleVisibility };
+  });
   return (
     <div>
       <div style={hideWhenVisible}>
@@ -31,8 +34,8 @@ const Togglable = forwardRef((props, ref) => {  const [visible, setVisible] = us
         <button onClick={toggleVisibility}>cancel</button>
       </div>
     </div>
-  )
-})
+  );
+});
 
 const LoginForm = ({ setUser }) => {
   const [username, setUsername] = useState("");
@@ -94,10 +97,14 @@ const Blogs = ({ user, setUser }) => {
   const [blogs, setBlogs] = useState([]);
   const [successMessage, setSuccessMessage] = useState(null);
 
+
   useEffect(() => {
     blogService.getAll().then((blogs) => setBlogs(blogs));
   }, []);
 
+  const updateBlogs = (updatedBlog) => {
+    setBlogs(blogs.map((b)=> b.id === updatedBlog.id ? updatedBlog : b))
+  }
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
@@ -126,7 +133,7 @@ const Blogs = ({ user, setUser }) => {
         ></BlogForm>
       </Togglable>
       {blogs.map((blog) => (
-        <Blog key={blog.id} blog={blog} />
+        <Blog key={blog.id} blog={blog} updateBlogs={updateBlogs} />
       ))}
     </div>
   );
