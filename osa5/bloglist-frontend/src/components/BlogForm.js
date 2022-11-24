@@ -57,4 +57,5 @@ const BlogForm = forwardRef(({ setSuccessMessage, setBlogs, blogs }, ref) => {
   );
 });
 
+BlogForm.displayName = "BlogForm";
 export default BlogForm;

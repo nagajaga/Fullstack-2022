@@ -5,10 +5,10 @@ let token = null;
 const setToken = (newToken) => {
   token = `bearer ${newToken}`;
 };
-const getAll = async() => {
+const getAll = async () => {
   const config = { headers: { Authorization: token } };
   const response = await axios.get(baseUrl, config);
-  return response.data
+  return response.data;
 };
 
 const create = async (newObject) => {
@@ -26,7 +26,6 @@ const update = async (id, newObject) => {
 const remove = async (id) => {
   const config = { headers: { Authorization: token } };
   await axios.delete(`${baseUrl}/${id}`, config);
-  
-}
+};
 
 export default { getAll, create, update, setToken, remove };
