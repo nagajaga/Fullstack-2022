@@ -20,6 +20,21 @@ const Blogs = ({ user, setUser }) => {
   const removeBlog = (removedId) => {
     setBlogs(blogs.filter((b) => b.id !== removedId));
   };
+
+  const like = async (blog) => {
+    const likeBlog = {
+      likes: blog.likes + 1,
+    };
+    const updatedBlog = await blogService.update(blog.id, likeBlog);
+    updateBlogs(updatedBlog);
+  };
+
+  const remove = async (blog) => {
+    if (window.confirm(`Remove blog ${blog.title} by ${blog.author}`)) {
+      await blogService.remove(blog.id);
+      removeBlog(blog.id);
+    }
+  };
   const logout = () => {
     window.localStorage.removeItem("loggedBlogappUser");
     setUser(null);
@@ -53,8 +68,8 @@ const Blogs = ({ user, setUser }) => {
           <Blog
             key={blog.id}
             blog={blog}
-            updateBlogs={updateBlogs}
-            removeBlog={removeBlog}
+            like={like}
+            remove={remove}
           />
         ))}
     </div>

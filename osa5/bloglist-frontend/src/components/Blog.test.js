@@ -41,3 +41,24 @@ test("renders all information when button is pressed", async () => {
   screen.getByText("likes 0");
   screen.getByText(blog.user.name);
 });
+
+test("clicking the like button twice calls event handler twice", async () => {
+  const blog = {
+    title: "Component testing is done with react-testing-library",
+    author: "me",
+    url: "asdf.com",
+    likes: 0,
+    user: { name: "joel" },
+  };
+
+  const mockHandler = jest.fn();
+
+  render(<Blog blog={blog} like={mockHandler} />);
+
+  const user = userEvent.setup();
+  const button = screen.getByText("like");
+  await user.click(button);
+  await user.click(button);
+
+  expect(mockHandler.mock.calls).toHaveLength(2);
+});
